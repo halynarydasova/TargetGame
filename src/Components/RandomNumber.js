@@ -17,12 +17,12 @@ export default RandomNumber;
 
 const styles = StyleSheet.create({ 
   random: {
-    width: 200,
-    height: 100,
+    width: 190,
+    height: 80,
     marginBottom: 10,
     borderRadius: 10,
     textAlign: 'center',
-    lineHeight: 100,
+    lineHeight: 80,
     backgroundColor: '#ccc',
     fontSize: 36,
   },

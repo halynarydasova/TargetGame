@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Button } from 'react-native';
 import RandomNumber from './RandomNumber';
+import stuffle from 'lodash/shuffle';
 
-const Game = ({ randomNumberCount,initialSeconds }) => {
+const Game = ({ randomNumberCount,initialSeconds, onPlayAgain }) => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [gameStatus, setGameStatus] = useState('PLAYING');
   const [remainingSeconds, setRemainingSeconds] = useState(initialSeconds)
@@ -11,33 +12,18 @@ const Game = ({ randomNumberCount,initialSeconds }) => {
   
   let intervalId;
 
-  const stuffledNumbers = useMemo(() => {
-    let i = randomNumbers.length;
-    const array = [...randomNumbers];
-    let j = 0;
-    let temp = 0;
-    
-    while (i--) {
-      j = Math.floor(Math.random() * (i + 1));
-
-      temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-
-    return array;
-  }, [randomNumbers])
+  const stuffledNumbers = useMemo(() => stuffle(randomNumbers), [randomNumbers])
   
   const target = useMemo(() => randomNumbers.slice(0, randomNumberCount - 2)
   .reduce((acc, curr) => acc + curr, 0), [randomNumbers])
 
-  const restart = () => {
-    setSelectedIds([]);
-    setGameStatus('PLAYING');
-    setRemainingSeconds(initialSeconds);
-    setRandomNumbers(Array.from({length : randomNumberCount})
-    .map(() => 1 + Math.floor(10 * Math.random())));
-  }
+  // const restart = () => {
+  //   setSelectedIds([]);
+  //   setGameStatus('PLAYING');
+  //   setRemainingSeconds(initialSeconds);
+  //   setRandomNumbers(Array.from({length : randomNumberCount})
+  //   .map(() => 1 + Math.floor(10 * Math.random())));
+  // }
   const isNumberSelected = (numberIdx) => {
     return selectedIds.indexOf(numberIdx) >= 0;
   }
@@ -96,9 +82,11 @@ const Game = ({ randomNumberCount,initialSeconds }) => {
       />
       ))}
       </View>
-      {gameStatus !== 'PLAYING' && <TouchableOpacity onPress={restart}>
-        <Text style={styles.reloadBtn}>New game</Text>
-      </TouchableOpacity>}
+      {gameStatus !== 'PLAYING' && <Button 
+        onPress={onPlayAgain} 
+        title='New game'
+        // style={styles.reloadBtn} 
+        />}
     </View>
   );
 };
@@ -123,20 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around'
-    
-
   },
-  random: {
-    width: 200,
-    height: 100,
-    marginBottom: 10,
-    borderRadius: 10,
-    textAlign: 'center',
-    lineHeight: 100,
-    backgroundColor: '#bbb',
-    fontSize: 36,
-  },
-
   STATUS_PLAYING: {
     backgroundColor: "#aaa",
   }, 
@@ -152,8 +127,7 @@ const styles = StyleSheet.create({
     lineHeight: 40,
   },
   reloadBtn: {
-    textAlign: 'center',
-    marginBottom: 40,
+    height: 300,
     fontSize: 35,
   }
 
